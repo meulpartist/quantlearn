@@ -1,0 +1,83 @@
+# 1.Install Library ที่จำเป็น
+# ccxt library ที่นิยมในการเชื่อม exchang api ได้ง่าย
+# pandas แปลข้อมูลเป็นตาราง ช่วยให้อ่านง่ายมากขึ้น
+# json ดึงข้อมูลจาก exchange
+
+!pip install pandas
+!pip isstall ccxt
+!pip isstall json
+
+#print(dir(ccxt.frx()))  check order broker allow
+
+apiKey = ""       #enter API
+secretKey = ""      # enter secret Key
+subaccount = "HW001"
+
+# Exchange detail
+exchange = ccxt.ftx({
+    "apiKey": apiKey , "secret" : secret ,"enableRateLimit" : True
+}) 
+
+# Sub account check
+if subaccount == 0 :
+  print("This is Main Account")
+else :
+  exchange.header = {"FTX-SUBACCOUNT": subaccount}
+  
+def getPrice():
+  pair = "BTC-PREP"
+  r1 = json.dumps(exchange.fetch_ticker(pair))
+  dataPrice = json.load(r1)
+  return  (dataPrice["last"])
+
+def showPrice():
+  print("Your Pending Order")
+  pendingOrder = pd.Dataframe(exchange.fetch_open_order(pair),
+                  column = ['id','datetime','status','symbol','type','side','price','amount','filled','average','remaining'])
+  display(pendingOrder)
+  
+def showMatched(pair):
+  print("Your Matched Order")
+  df2 = pd.Dataframe(exchange.fetchMyTrade(pair),column=['id',datetime', 'symbol','type','side','price','amount','cost'])
+  return df2
+  
+def sendBuy():
+  pair = "BTC-PREP"
+  type = "market"
+  side = "buy"
+  usd = 1
+  price = buySignal
+  size_order = usd/price
+  reduceOnly = False
+  postOnly = False
+  ioc = False
+  
+ #send Order
+ exchange.create_order(pair,type,side,size_order,price)
+ 
+ #Show order status
+ print("    ")
+ showPending(pair)
+ print("     ")
+ showMatched(pair)
+ 
+def sendSell():
+    pair = "BTC-PREP"
+  type = "market"
+  side = "buy"
+  usd = 1
+  price = sellSignal
+  size_order = usd/price
+  reduceOnly = True
+  postOnly = False
+  ioc = False
+ #send Order
+ exchange.create_order(pair,type,side,size_order,price)
+ 
+ #Show order status
+ print("    ")
+ showPending(pair)
+ print("     ")
+ showMatched(pair)
+ 
+   
